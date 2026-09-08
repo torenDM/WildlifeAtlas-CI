@@ -27,7 +27,7 @@ final class TaxonSearchViewModel: ObservableObject {
     @Published private(set) var results: [Taxon] = []
     @Published private(set) var recentTaxa: [TaxonSelection] = []
 
-    private let service: INaturalistService
+    private let service: any INaturalistServiceProtocol
     private let userDefaults: UserDefaults
 
     private let recentTaxaKey = "recentTaxa"
@@ -38,7 +38,7 @@ final class TaxonSearchViewModel: ObservableObject {
     private var searchTask: Task<Void, Never>?
 
     init(
-        service: INaturalistService = INaturalistService(),
+        service: any INaturalistServiceProtocol = INaturalistService(),
         userDefaults: UserDefaults = .standard
     ) {
         self.service = service

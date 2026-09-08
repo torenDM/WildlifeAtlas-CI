@@ -17,14 +17,14 @@ final class ObservationDetailViewModel: ObservableObject {
     @Published private(set) var state: State = .loading
     @Published private(set) var observation: Observation?
 
-    private let service: INaturalistService
+    private let service: any INaturalistServiceProtocol
 
     // Не загружаем одно и то же observation повторно
     // при повторных вызовах SwiftUI task.
     private var didLoadObservation = false
 
     init(
-        service: INaturalistService = INaturalistService()
+        service: any INaturalistServiceProtocol = INaturalistService()
     ) {
         self.service = service
     }

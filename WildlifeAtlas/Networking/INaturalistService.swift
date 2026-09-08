@@ -1,9 +1,29 @@
 import Foundation
 
+// Абстракция networking-сервиса.
+// ViewModel зависят от протокола, поэтому в unit-тестах
+// реальный iNaturalist API можно заменить контролируемым mock.
+protocol INaturalistServiceProtocol {
+    func observations(
+        page: Int,
+        perPage: Int,
+        filters: ObservationFilters
+    ) async throws -> APIResponse<Observation>
+
+    func searchTaxa(
+        query: String,
+        perPage: Int
+    ) async throws -> APIResponse<Taxon>
+
+    func observation(
+        id: Int
+    ) async throws -> Observation
+}
+
 // Сервис для работы с конкретными endpoint'ами iNaturalist.
 // В отличие от APIClient, этот слой знает структуру API:
 // пути, query-параметры и типы ожидаемых ответов.
-final class INaturalistService {
+final class INaturalistService: INaturalistServiceProtocol {
     private let apiClient: APIClient
 
     // Базовый адрес API, от которого строятся все endpoint'ы.

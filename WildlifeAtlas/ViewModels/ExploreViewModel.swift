@@ -29,7 +29,7 @@ final class ExploreViewModel: ObservableObject {
     @Published private(set) var isLoadingNextPage = false
     @Published private(set) var paginationErrorMessage: String?
 
-    private let service: INaturalistService
+    private let service: any INaturalistServiceProtocol
     private let pageSize = 20
 
     private var currentPage = 0
@@ -44,7 +44,10 @@ final class ExploreViewModel: ObservableObject {
     // async-запросов после изменения фильтра.
     private var queryGeneration = 0
 
-    init(service: INaturalistService = INaturalistService()) {
+    init(
+        service: any INaturalistServiceProtocol =
+            INaturalistService()
+    ) {
         self.service = service
     }
 
