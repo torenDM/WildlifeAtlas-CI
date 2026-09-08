@@ -22,8 +22,45 @@ struct ContentView: View {
             ProgressView("Loading observations...")
 
         case .content:
-            List(viewModel.observations) { observation in
-                ObservationRowView(observation: observation)
+            List {
+                ForEach(viewModel.observations) { observation in
+                    ObservationRowView(observation: observation)
+                        .onAppear {
+                            Task {
+                                await viewModel.loadNextPageIfNeeded(
+                                    currentItem: observation
+                                )
+                            }
+                        }
+                }
+
+                if viewModel.isLoadingNextPage {
+                    HStack {
+                        Spacer()
+
+                        ProgressView()
+
+                        Spacer()
+                    }
+                    .listRowSeparator(.hidden)
+                }
+
+                if viewModel.paginationErrorMessage != nil {
+                    VStack(spacing: 8) {
+                        Text("Unable to load more observations")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        Button("Retry") {
+                            Task {
+                                await viewModel.retryNextPage()
+                            }
+                        }
+                        .font(.caption.weight(.semibold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                }
             }
             .listStyle(.plain)
 
