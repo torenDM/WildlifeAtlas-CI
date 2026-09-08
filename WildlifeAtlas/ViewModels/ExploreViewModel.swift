@@ -13,17 +13,19 @@ final class ExploreViewModel: ObservableObject {
 
     @Published private(set) var state: State = .loading
     @Published private(set) var observations: [Observation] = []
+    @Published private(set) var filters = ObservationFilters()
 
     @Published private(set) var isLoadingNextPage = false
     @Published private(set) var paginationErrorMessage: String?
 
     private let service: INaturalistService
-
     private let pageSize = 20
 
     private var currentPage = 0
     private var hasMorePages = true
     private var didLoadInitialPage = false
+
+    private var queryGeneration = 0
 
     init(service: INaturalistService = INaturalistService()) {
         self.service = service
@@ -35,14 +37,37 @@ final class ExploreViewModel: ObservableObject {
         }
 
         didLoadInitialPage = true
-        await loadInitialPage()
+
+        await loadInitialPage(
+            resetInitialLoadOnCancellation: true
+        )
     }
 
     func retry() async {
         await loadInitialPage()
     }
 
-    func loadNextPageIfNeeded(currentItem: Observation) async {
+    func setQuality(_ quality: QualityFilter) async {
+        guard filters.quality.rawValue != quality.rawValue else {
+            return
+        }
+
+        filters.quality = quality
+        await reloadForFilterChange()
+    }
+
+    func setOrder(_ order: ObservationOrder) async {
+        guard filters.order.rawValue != order.rawValue else {
+            return
+        }
+
+        filters.order = order
+        await reloadForFilterChange()
+    }
+
+    func loadNextPageIfNeeded(
+        currentItem: Observation
+    ) async {
         guard stateIsContent,
               hasMorePages,
               !isLoadingNextPage,
@@ -62,7 +87,24 @@ final class ExploreViewModel: ObservableObject {
         await loadNextPage()
     }
 
-    private func loadInitialPage() async {
+    private func reloadForFilterChange() async {
+        queryGeneration += 1
+
+        observations = []
+        currentPage = 0
+        hasMorePages = true
+
+        isLoadingNextPage = false
+        paginationErrorMessage = nil
+
+        await loadInitialPage()
+    }
+
+    private func loadInitialPage(
+        resetInitialLoadOnCancellation: Bool = false
+    ) async {
+        let generation = queryGeneration
+
         state = .loading
         paginationErrorMessage = nil
 
@@ -70,22 +112,35 @@ final class ExploreViewModel: ObservableObject {
             let response = try await service.observations(
                 page: 1,
                 perPage: pageSize,
-                filters: ObservationFilters()
+                filters: filters
             )
+
+            guard generation == queryGeneration else {
+                return
+            }
 
             observations = response.results
             currentPage = response.page
 
             hasMorePages =
-                response.page * response.perPage < response.totalResults
+                response.page * response.perPage
+                < response.totalResults
 
             state = observations.isEmpty
                 ? .empty
                 : .content
 
         } catch is CancellationError {
-            didLoadInitialPage = false
+            if resetInitialLoadOnCancellation,
+               generation == queryGeneration {
+                didLoadInitialPage = false
+            }
+
         } catch {
+            guard generation == queryGeneration else {
+                return
+            }
+
             observations = []
             currentPage = 0
             hasMorePages = true
@@ -95,11 +150,15 @@ final class ExploreViewModel: ObservableObject {
     }
 
     private func loadNextPage() async {
+        let generation = queryGeneration
+
         isLoadingNextPage = true
         paginationErrorMessage = nil
 
         defer {
-            isLoadingNextPage = false
+            if generation == queryGeneration {
+                isLoadingNextPage = false
+            }
         }
 
         do {
@@ -108,31 +167,49 @@ final class ExploreViewModel: ObservableObject {
             let response = try await service.observations(
                 page: nextPage,
                 perPage: pageSize,
-                filters: ObservationFilters()
+                filters: filters
             )
+
+            guard generation == queryGeneration else {
+                return
+            }
 
             appendUnique(response.results)
 
             currentPage = response.page
 
             hasMorePages =
-                response.page * response.perPage < response.totalResults
+                response.page * response.perPage
+                < response.totalResults
 
         } catch is CancellationError {
             return
+
         } catch {
-            paginationErrorMessage = error.localizedDescription
+            guard generation == queryGeneration else {
+                return
+            }
+
+            paginationErrorMessage =
+                error.localizedDescription
         }
     }
 
-    private func appendUnique(_ newObservations: [Observation]) {
-        let existingIDs = Set(observations.map(\.id))
+    private func appendUnique(
+        _ newObservations: [Observation]
+    ) {
+        let existingIDs = Set(
+            observations.map(\.id)
+        )
 
-        let uniqueObservations = newObservations.filter {
-            !existingIDs.contains($0.id)
-        }
+        let uniqueObservations =
+            newObservations.filter {
+                !existingIDs.contains($0.id)
+            }
 
-        observations.append(contentsOf: uniqueObservations)
+        observations.append(
+            contentsOf: uniqueObservations
+        )
     }
 
     private var stateIsContent: Bool {

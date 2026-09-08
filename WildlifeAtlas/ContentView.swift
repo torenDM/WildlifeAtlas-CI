@@ -16,6 +16,7 @@ struct ContentView: View {
                 .navigationTitle("Wildlife Atlas")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
+                        filterMenu
                         layoutPicker
                     }
                 }
@@ -134,6 +135,85 @@ struct ContentView: View {
                     .padding()
             }
         }
+    }
+
+    private var filterMenu: some View {
+        Menu {
+            Section("Quality") {
+                Button {
+                    Task {
+                        await viewModel.setQuality(.any)
+                    }
+                } label: {
+                    if viewModel.filters.quality.rawValue
+                        == QualityFilter.any.rawValue {
+                        Label(
+                            "Any",
+                            systemImage: "checkmark"
+                        )
+                    } else {
+                        Text("Any")
+                    }
+                }
+
+                Button {
+                    Task {
+                        await viewModel.setQuality(.research)
+                    }
+                } label: {
+                    if viewModel.filters.quality.rawValue
+                        == QualityFilter.research.rawValue {
+                        Label(
+                            "Research",
+                            systemImage: "checkmark"
+                        )
+                    } else {
+                        Text("Research")
+                    }
+                }
+            }
+
+            Section("Order") {
+                Button {
+                    Task {
+                        await viewModel.setOrder(.newest)
+                    }
+                } label: {
+                    if viewModel.filters.order.rawValue
+                        == ObservationOrder.newest.rawValue {
+                        Label(
+                            "Newest first",
+                            systemImage: "checkmark"
+                        )
+                    } else {
+                        Text("Newest first")
+                    }
+                }
+
+                Button {
+                    Task {
+                        await viewModel.setOrder(.oldest)
+                    }
+                } label: {
+                    if viewModel.filters.order.rawValue
+                        == ObservationOrder.oldest.rawValue {
+                        Label(
+                            "Oldest first",
+                            systemImage: "checkmark"
+                        )
+                    } else {
+                        Text("Oldest first")
+                    }
+                }
+            }
+        } label: {
+            Image(
+                systemName: hasNonDefaultFilters
+                    ? "line.3.horizontal.decrease.circle.fill"
+                    : "line.3.horizontal.decrease.circle"
+            )
+        }
+        .accessibilityLabel("Filters")
     }
 
     private var layoutPicker: some View {
