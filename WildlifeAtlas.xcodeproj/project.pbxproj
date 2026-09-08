@@ -20,6 +20,9 @@
 		A10000000000000000000011 /* TaxonSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* TaxonSelection.swift */; };
 		A10000000000000000000012 /* TaxonSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* TaxonSearchViewModel.swift */; };
 		A10000000000000000000013 /* TaxonSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* TaxonSearchView.swift */; };
+		A10000000000000000000014 /* ObservationDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* ObservationDetailViewModel.swift */; };
+        A10000000000000000000015 /* ObservationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* ObservationDetailView.swift */; };
+        A10000000000000000000016 /* ObservationPrivacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ObservationPrivacy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +40,9 @@
 		A20000000000000000000012 /* TaxonSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonSelection.swift; sourceTree = "<group>"; };
 		A20000000000000000000013 /* TaxonSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonSearchViewModel.swift; sourceTree = "<group>"; };
 		A20000000000000000000014 /* TaxonSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonSearchView.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* ObservationDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationDetailViewModel.swift; sourceTree = "<group>"; };
+        A20000000000000000000016 /* ObservationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationDetailView.swift; sourceTree = "<group>"; };
+        A20000000000000000000017 /* ObservationPrivacy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationPrivacy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,8 +91,9 @@
 		A40000000000000000000004 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000004 /* APIModels.swift */,
-				A20000000000000000000012 /* TaxonSelection.swift */,
+					A20000000000000000000004 /* APIModels.swift */,
+					A20000000000000000000012 /* TaxonSelection.swift */,
+					A20000000000000000000017 /* ObservationPrivacy.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -107,8 +114,9 @@
 		A40000000000000000000006 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000009 /* ExploreViewModel.swift */,
-				A20000000000000000000013 /* TaxonSearchViewModel.swift */,
+					A20000000000000000000009 /* ExploreViewModel.swift */,
+					A20000000000000000000013 /* TaxonSearchViewModel.swift */,
+					A20000000000000000000015 /* ObservationDetailViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -117,9 +125,10 @@
 		A40000000000000000000007 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000010 /* ObservationRowView.swift */,
-				A20000000000000000000011 /* ObservationGridItemView.swift */,
-				A20000000000000000000014 /* TaxonSearchView.swift */,
+					A20000000000000000000010 /* ObservationRowView.swift */,
+					A20000000000000000000011 /* ObservationGridItemView.swift */,
+					A20000000000000000000014 /* TaxonSearchView.swift */,
+					A20000000000000000000016 /* ObservationDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -205,6 +214,9 @@
 				A10000000000000000000011 /* TaxonSelection.swift in Sources */,
 				A10000000000000000000012 /* TaxonSearchViewModel.swift in Sources */,
 				A10000000000000000000013 /* TaxonSearchView.swift in Sources */,
+				A10000000000000000000014 /* ObservationDetailViewModel.swift in Sources */,
+                A10000000000000000000015 /* ObservationDetailView.swift in Sources */,
+                A10000000000000000000016 /* ObservationPrivacy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

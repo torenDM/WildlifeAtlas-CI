@@ -17,7 +17,7 @@ struct ContentView: View {
     @State private var isTaxonSearchPresented = false
 
     var body: some View {
-        NavigationStack {
+       NavigationStack {
             content
                 .navigationTitle("Wildlife Atlas")
                 .toolbar {
@@ -27,6 +27,13 @@ struct ContentView: View {
                         filterMenu
                         layoutPicker
                     }
+                }
+                .navigationDestination(
+                    for: Int.self
+                ) { observationID in
+                    ObservationDetailView(
+                        observationID: observationID
+                    )
                 }
         }
         // ViewModel самостоятельно защищается
@@ -102,9 +109,13 @@ struct ContentView: View {
     private var listContent: some View {
         List {
             ForEach(viewModel.observations) { observation in
-                ObservationRowView(
-                    observation: observation
-                )
+                NavigationLink(
+                    value: observation.id
+                ) {
+                    ObservationRowView(
+                        observation: observation
+                    )
+                }
                 .onAppear {
                     requestNextPageIfNeeded(
                         for: observation
@@ -143,9 +154,14 @@ struct ContentView: View {
                 spacing: 12
             ) {
                 ForEach(viewModel.observations) { observation in
-                    ObservationGridItemView(
-                        observation: observation
-                    )
+                    NavigationLink(
+                        value: observation.id
+                    ) {
+                        ObservationGridItemView(
+                            observation: observation
+                        )
+                    }
+                    .buttonStyle(.plain)
                     .onAppear {
                         requestNextPageIfNeeded(
                             for: observation
