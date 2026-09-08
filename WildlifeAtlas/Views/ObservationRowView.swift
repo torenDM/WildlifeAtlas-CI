@@ -48,11 +48,9 @@ struct ObservationRowView: View {
         .padding(.vertical, 4)
     }
 
-    // AsyncImage пока отвечает за базовую загрузку фотографии.
-    // Позже этот блок можно заменить реализацией с memory cache.
     @ViewBuilder
     private func thumbnail(url: URL) -> some View {
-        AsyncImage(url: url) { phase in
+        CachedAsyncImage(url: url) { phase in
             switch phase {
             case .empty:
                 ZStack {
@@ -75,9 +73,6 @@ struct ObservationRowView: View {
                     Image(systemName: "photo")
                         .foregroundStyle(.secondary)
                 }
-
-            @unknown default:
-                EmptyView()
             }
         }
         .frame(width: 88, height: 88)

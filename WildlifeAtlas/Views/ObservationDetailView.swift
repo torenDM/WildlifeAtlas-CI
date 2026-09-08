@@ -14,6 +14,23 @@ struct ObservationDetailView: View {
         content
             .navigationTitle("Observation")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if let shareURL {
+                    ToolbarItem(
+                        placement: .topBarTrailing
+                    ) {
+                        ShareLink(item: shareURL) {
+                            Image(
+                                systemName:
+                                    "square.and.arrow.up"
+                            )
+                        }
+                        .accessibilityLabel(
+                            "Share observation"
+                        )
+                    }
+                }
+            }
             .task {
                 await viewModel.loadIfNeeded(
                     id: observationID
@@ -390,7 +407,7 @@ struct ObservationDetailView: View {
     private func detailImage(
         url: URL
     ) -> some View {
-        AsyncImage(url: url) { phase in
+        CachedAsyncImage(url: url) { phase in
             switch phase {
 
             case .empty:
@@ -415,16 +432,12 @@ struct ObservationDetailView: View {
                         .font(.largeTitle)
                         .foregroundStyle(.secondary)
                 }
-
-            @unknown default:
-                EmptyView()
             }
         }
-        .frame(
-            maxWidth: .infinity
-        )
+        .frame(maxWidth: .infinity)
         .frame(height: 320)
         .clipped()
+        .accessibilityLabel("Observation photo")
     }
 
     private var unavailableContent: some View {
@@ -450,6 +463,22 @@ struct ObservationDetailView: View {
                 )
             }
         }
+    }
+
+    private var shareURL: URL? {
+        guard
+            let value = viewModel.observation?.uri?
+                .trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                ),
+            !value.isEmpty,
+            let url = URL(string: value),
+            url.scheme != nil
+        else {
+            return nil
+        }
+
+        return url
     }
 
     private func photoURLs(

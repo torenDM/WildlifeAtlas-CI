@@ -23,6 +23,7 @@
 		A10000000000000000000014 /* ObservationDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* ObservationDetailViewModel.swift */; };
         A10000000000000000000015 /* ObservationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* ObservationDetailView.swift */; };
         A10000000000000000000016 /* ObservationPrivacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ObservationPrivacy.swift */; };
+		A10000000000000000000017 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* CachedAsyncImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		A20000000000000000000015 /* ObservationDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationDetailViewModel.swift; sourceTree = "<group>"; };
         A20000000000000000000016 /* ObservationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationDetailView.swift; sourceTree = "<group>"; };
         A20000000000000000000017 /* ObservationPrivacy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationPrivacy.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 					A20000000000000000000011 /* ObservationGridItemView.swift */,
 					A20000000000000000000014 /* TaxonSearchView.swift */,
 					A20000000000000000000016 /* ObservationDetailView.swift */,
+					A20000000000000000000018 /* CachedAsyncImage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				A10000000000000000000014 /* ObservationDetailViewModel.swift in Sources */,
                 A10000000000000000000015 /* ObservationDetailView.swift in Sources */,
                 A10000000000000000000016 /* ObservationPrivacy.swift in Sources */,
+				A10000000000000000000017 /* CachedAsyncImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
