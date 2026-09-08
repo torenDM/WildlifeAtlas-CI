@@ -17,6 +17,9 @@
 		A10000000000000000000008 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* ExploreViewModel.swift */; };
 		A10000000000000000000009 /* ObservationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* ObservationRowView.swift */; };
 		A10000000000000000000010 /* ObservationGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* ObservationGridItemView.swift */; };
+		A10000000000000000000011 /* TaxonSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* TaxonSelection.swift */; };
+		A10000000000000000000012 /* TaxonSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* TaxonSearchViewModel.swift */; };
+		A10000000000000000000013 /* TaxonSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* TaxonSearchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +34,9 @@
 		A20000000000000000000009 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* ObservationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationRowView.swift; sourceTree = "<group>"; };
 		A20000000000000000000011 /* ObservationGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationGridItemView.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* TaxonSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonSelection.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* TaxonSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonSearchViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000014 /* TaxonSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonSearchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000004 /* APIModels.swift */,
+				A20000000000000000000012 /* TaxonSelection.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -101,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000009 /* ExploreViewModel.swift */,
+				A20000000000000000000013 /* TaxonSearchViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -111,6 +119,7 @@
 			children = (
 				A20000000000000000000010 /* ObservationRowView.swift */,
 				A20000000000000000000011 /* ObservationGridItemView.swift */,
+				A20000000000000000000014 /* TaxonSearchView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -193,6 +202,9 @@
 				A10000000000000000000008 /* ExploreViewModel.swift in Sources */,
 				A10000000000000000000009 /* ObservationRowView.swift in Sources */,
 				A10000000000000000000010 /* ObservationGridItemView.swift in Sources */,
+				A10000000000000000000011 /* TaxonSelection.swift in Sources */,
+				A10000000000000000000012 /* TaxonSearchViewModel.swift in Sources */,
+				A10000000000000000000013 /* TaxonSearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

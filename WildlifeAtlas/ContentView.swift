@@ -14,6 +14,7 @@ struct ContentView: View {
 
     @StateObject private var viewModel = ExploreViewModel()
     @State private var layout: ExploreLayout = .list
+    @State private var isTaxonSearchPresented = false
 
     var body: some View {
         NavigationStack {
@@ -32,6 +33,17 @@ struct ContentView: View {
         // от повторной загрузки первой страницы.
         .task {
             await viewModel.loadInitialPageIfNeeded()
+        }
+        .sheet(
+            isPresented: $isTaxonSearchPresented
+        ) {
+            TaxonSearchView(
+                selectedTaxon: viewModel.selectedTaxon
+            ) { taxon in
+                Task {
+                    await viewModel.setTaxon(taxon)
+                }
+            }
         }
     }
 
@@ -195,6 +207,29 @@ struct ContentView: View {
                 }
             }
 
+            Section("Taxon") {
+                Button {
+                    isTaxonSearchPresented = true
+                } label: {
+                    Label(
+                        viewModel.selectedTaxon?.displayName
+                            ?? "Choose taxon",
+                        systemImage: "leaf"
+                    )
+                }
+
+                if viewModel.selectedTaxon != nil {
+                    Button(
+                        "Clear taxon",
+                        role: .destructive
+                    ) {
+                        Task {
+                            await viewModel.setTaxon(nil)
+                        }
+                    }
+                }
+            }
+
             Section("Order") {
                 Button {
                     Task {
@@ -241,6 +276,8 @@ struct ContentView: View {
     }
 
     private var hasNonDefaultFilters: Bool {
+        viewModel.selectedTaxon != nil
+            ||
         viewModel.filters.quality.rawValue
             != QualityFilter.any.rawValue
             ||

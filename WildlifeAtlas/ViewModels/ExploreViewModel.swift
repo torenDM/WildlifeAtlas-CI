@@ -21,6 +21,10 @@ final class ExploreViewModel: ObservableObject {
     @Published private(set) var observations: [Observation] = []
     @Published private(set) var filters = ObservationFilters()
 
+    // Выбранный таксон храним отдельно от его ID,
+    // чтобы интерфейс мог показать пользователю название фильтра.
+    @Published private(set) var selectedTaxon: TaxonSelection?
+
     // Состояние пагинации отделено от основного State.
     @Published private(set) var isLoadingNextPage = false
     @Published private(set) var paginationErrorMessage: String?
@@ -80,6 +84,22 @@ final class ExploreViewModel: ObservableObject {
         }
 
         filters.order = order
+        await reloadForFilterChange()
+    }
+
+    // Taxon является третьим независимым фильтром.
+    // Для API достаточно его ID, а полная TaxonSelection
+    // используется только для отображения выбранного значения.
+    func setTaxon(
+        _ taxon: TaxonSelection?
+    ) async {
+        guard selectedTaxon != taxon else {
+            return
+        }
+
+        selectedTaxon = taxon
+        filters.taxonID = taxon?.id
+
         await reloadForFilterChange()
     }
 
