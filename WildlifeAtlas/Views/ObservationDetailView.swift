@@ -7,6 +7,9 @@ struct ObservationDetailView: View {
 
     let observationID: Int
 
+    @EnvironmentObject private var favoritesStore:
+    FavoritesStore
+
     @StateObject private var viewModel =
         ObservationDetailViewModel()
 
@@ -15,10 +18,35 @@ struct ObservationDetailView: View {
             .navigationTitle("Observation")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if let shareURL {
-                    ToolbarItem(
-                        placement: .topBarTrailing
-                    ) {
+                ToolbarItemGroup(
+                    placement: .topBarTrailing
+                ) {
+                    if let observation =
+                        viewModel.observation {
+                        Button {
+                            favoritesStore.toggle(
+                                observation
+                            )
+                        } label: {
+                            Image(
+                                systemName:
+                                    favoritesStore.contains(
+                                        id: observation.id
+                                    )
+                                    ? "heart.fill"
+                                    : "heart"
+                            )
+                        }
+                        .accessibilityLabel(
+                            favoritesStore.contains(
+                                id: observation.id
+                            )
+                            ? "Remove from favorites"
+                            : "Add to favorites"
+                        )
+                    }
+
+                    if let shareURL {
                         ShareLink(item: shareURL) {
                             Image(
                                 systemName:

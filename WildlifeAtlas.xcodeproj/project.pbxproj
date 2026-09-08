@@ -24,6 +24,9 @@
         A10000000000000000000015 /* ObservationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* ObservationDetailView.swift */; };
         A10000000000000000000016 /* ObservationPrivacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ObservationPrivacy.swift */; };
 		A10000000000000000000017 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* CachedAsyncImage.swift */; };
+		A10000000000000000000018 /* FavoriteObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* FavoriteObservation.swift */; };
+		A10000000000000000000019 /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* FavoritesStore.swift */; };
+		A10000000000000000000020 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* FavoritesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +48,9 @@
         A20000000000000000000016 /* ObservationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationDetailView.swift; sourceTree = "<group>"; };
         A20000000000000000000017 /* ObservationPrivacy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationPrivacy.swift; sourceTree = "<group>"; };
 		A20000000000000000000018 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
+		A20000000000000000000019 /* FavoriteObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteObservation.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* FavoritesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesStore.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +102,7 @@
 					A20000000000000000000004 /* APIModels.swift */,
 					A20000000000000000000012 /* TaxonSelection.swift */,
 					A20000000000000000000017 /* ObservationPrivacy.swift */,
+					A20000000000000000000019 /* FavoriteObservation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -119,6 +126,7 @@
 					A20000000000000000000009 /* ExploreViewModel.swift */,
 					A20000000000000000000013 /* TaxonSearchViewModel.swift */,
 					A20000000000000000000015 /* ObservationDetailViewModel.swift */,
+					A20000000000000000000020 /* FavoritesStore.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -132,6 +140,7 @@
 					A20000000000000000000014 /* TaxonSearchView.swift */,
 					A20000000000000000000016 /* ObservationDetailView.swift */,
 					A20000000000000000000018 /* CachedAsyncImage.swift */,
+					A20000000000000000000021 /* FavoritesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -221,6 +230,9 @@
                 A10000000000000000000015 /* ObservationDetailView.swift in Sources */,
                 A10000000000000000000016 /* ObservationPrivacy.swift in Sources */,
 				A10000000000000000000017 /* CachedAsyncImage.swift in Sources */,
+				A10000000000000000000018 /* FavoriteObservation.swift in Sources */,
+				A10000000000000000000019 /* FavoritesStore.swift in Sources */,
+				A10000000000000000000020 /* FavoritesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,6 +13,8 @@ struct ContentView: View {
     }
 
     @StateObject private var viewModel = ExploreViewModel()
+    @StateObject private var favoritesStore =
+        FavoritesStore()
     @State private var layout: ExploreLayout = .list
     @State private var isTaxonSearchPresented = false
 
@@ -24,6 +26,7 @@ struct ContentView: View {
                     ToolbarItemGroup(
                         placement: .topBarTrailing
                     ) {
+                        favoritesButton
                         filterMenu
                         layoutPicker
                     }
@@ -36,6 +39,7 @@ struct ContentView: View {
                     )
                 }
         }
+        .environmentObject(favoritesStore)
         // ViewModel самостоятельно защищается
         // от повторной загрузки первой страницы.
         .task {
@@ -182,6 +186,20 @@ struct ContentView: View {
                     .padding()
             }
         }
+    }
+
+    private var favoritesButton: some View {
+        NavigationLink {
+            FavoritesView()
+        } label: {
+            Image(
+                systemName:
+                    favoritesStore.favorites.isEmpty
+                        ? "heart"
+                        : "heart.fill"
+            )
+        }
+        .accessibilityLabel("Favorites")
     }
 
     // Меню содержит два независимых фильтра.
