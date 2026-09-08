@@ -31,7 +31,8 @@ struct FavoritesView: View {
                 ) { favorite in
                     NavigationLink {
                         ObservationDetailView(
-                            observationID: favorite.id
+                            observationID:
+                                favorite.id
                         )
                     } label: {
                         favoriteRow(favorite)
@@ -65,14 +66,18 @@ struct FavoritesView: View {
                 spacing: 6
             ) {
                 if let commonName =
-                    favorite.commonName {
+                    ObservationPresentation.nonEmpty(
+                        favorite.commonName
+                    ) {
                     Text(commonName)
                         .font(.headline)
                         .lineLimit(2)
                 }
 
                 if let scientificName =
-                    favorite.scientificName {
+                    ObservationPresentation.nonEmpty(
+                        favorite.scientificName
+                    ) {
                     Text(scientificName)
                         .font(.subheadline)
                         .italic()
@@ -80,8 +85,13 @@ struct FavoritesView: View {
                         .lineLimit(2)
                 }
 
-                if favorite.commonName == nil
-                    && favorite.scientificName == nil {
+                if ObservationPresentation.nonEmpty(
+                    favorite.commonName
+                ) == nil
+                    &&
+                    ObservationPresentation.nonEmpty(
+                        favorite.scientificName
+                    ) == nil {
                     Text(
                         "Observation #\(favorite.id)"
                     )
@@ -89,7 +99,10 @@ struct FavoritesView: View {
                 }
 
                 if let observedOn =
-                    favorite.observedOn {
+                    ObservationPresentation
+                        .observedDate(
+                            favorite.observedOn
+                        ) {
                     Label(
                         observedOn,
                         systemImage: "calendar"
@@ -99,11 +112,14 @@ struct FavoritesView: View {
                 }
 
                 Text(
-                    qualityTitle(
-                        favorite.qualityGrade
-                    )
+                    ObservationPresentation
+                        .qualityTitle(
+                            favorite.qualityGrade
+                        )
                 )
-                .font(.caption.weight(.semibold))
+                .font(
+                    .caption.weight(.semibold)
+                )
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(.quaternary)
@@ -113,6 +129,9 @@ struct FavoritesView: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 4)
+        .accessibilityElement(
+            children: .combine
+        )
     }
 
     @ViewBuilder
@@ -147,47 +166,26 @@ struct FavoritesView: View {
         }
         .frame(width: 72, height: 72)
         .clipShape(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(
+                cornerRadius: 10
+            )
         )
-        .accessibilityLabel(
-            "Observation photo"
-        )
+        .accessibilityHidden(true)
     }
 
     private func photoURL(
         for favorite: FavoriteObservation
     ) -> URL? {
         guard
-            let value = favorite.photoURL,
+            let value =
+                ObservationPresentation.nonEmpty(
+                    favorite.photoURL
+                ),
             let url = URL(string: value)
         else {
             return nil
         }
 
         return url
-    }
-
-    private func qualityTitle(
-        _ value: String
-    ) -> String {
-        switch value {
-
-        case "research":
-            return "Research"
-
-        case "needs_id":
-            return "Needs ID"
-
-        case "casual":
-            return "Casual"
-
-        default:
-            return value
-                .replacingOccurrences(
-                    of: "_",
-                    with: " "
-                )
-                .capitalized
-        }
     }
 }

@@ -1,27 +1,30 @@
 import SwiftUI
 
-// Представление одного observation в режиме списка.
-// Компонент получает готовую модель и отвечает только
-// за отображение доступной информации.
+// Карточка observation для Grid-режима.
+// В отличие от List использует вертикальную композицию
+// с крупным квадратным изображением.
 struct ObservationGridItemView: View {
+
     let observation: Observation
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            if let photoURL = photoURL {
-                thumbnail(url: photoURL)
-            }
+        VStack(
+            alignment: .leading,
+            spacing: 10
+        ) {
+            photo
 
-            VStack(alignment: .leading, spacing: 6) {
-                // Отсутствующие поля не заменяются фиктивным текстом:
-                // если API не вернул значение, элемент просто скрывается.
-                if let commonName = commonName {
+            VStack(
+                alignment: .leading,
+                spacing: 6
+            ) {
+                if let commonName {
                     Text(commonName)
                         .font(.headline)
                         .lineLimit(2)
                 }
 
-                if let scientificName = scientificName {
+                if let scientificName {
                     Text(scientificName)
                         .font(.subheadline)
                         .italic()
@@ -29,32 +32,66 @@ struct ObservationGridItemView: View {
                         .lineLimit(2)
                 }
 
-                if let observedOn = observedOn {
-                    Label(observedOn, systemImage: "calendar")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if commonName == nil
+                    && scientificName == nil {
+                    Text(
+                        "Observation #\(observation.id)"
+                    )
+                    .font(.headline)
+                }
+
+                if let observedOn {
+                    Label(
+                        observedOn,
+                        systemImage: "calendar"
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
                 }
 
                 Text(qualityTitle)
-                    .font(.caption.weight(.semibold))
+                    .font(
+                        .caption.weight(.semibold)
+                    )
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(.quaternary)
                     .clipShape(Capsule())
             }
-
-            Spacer(minLength: 0)
         }
-        .padding(.vertical, 4)
+        .frame(
+            maxWidth: .infinity,
+            alignment: .leading
+        )
+        .padding(10)
+        .background(.thinMaterial)
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 16
+            )
+        )
+        .accessibilityElement(
+            children: .combine
+        )
     }
 
-    // Загружает preview через общий memory cache.
-    // Если изображение уже использовалось в List, Grid или Details,
-    // повторный сетевой запрос не требуется.
     @ViewBuilder
-    private func thumbnail(url: URL) -> some View {
+    private var photo: some View {
+        if let photoURL {
+            thumbnail(url: photoURL)
+        } else {
+            photoPlaceholder
+        }
+    }
+
+    @ViewBuilder
+    private func thumbnail(
+        url: URL
+    ) -> some View {
         CachedAsyncImage(url: url) { phase in
             switch phase {
+
             case .empty:
                 ZStack {
                     Rectangle()
@@ -74,19 +111,50 @@ struct ObservationGridItemView: View {
                         .fill(.quaternary)
 
                     Image(systemName: "photo")
+                        .font(.title2)
                         .foregroundStyle(.secondary)
                 }
             }
         }
-        .frame(width: 88, height: 88)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .accessibilityLabel("Observation photo")
+        .frame(maxWidth: .infinity)
+        .aspectRatio(
+            1,
+            contentMode: .fit
+        )
+        .clipped()
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 12
+            )
+        )
+        .accessibilityHidden(true)
     }
 
-    // Выбираем первый доступный URL фотографии,
-    // отдавая предпочтение более подходящему для списка размеру.
+    private var photoPlaceholder: some View {
+        ZStack {
+            Rectangle()
+                .fill(.quaternary)
+
+            Image(systemName: "photo")
+                .font(.title2)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .aspectRatio(
+            1,
+            contentMode: .fit
+        )
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 12
+            )
+        )
+        .accessibilityHidden(true)
+    }
+
     private var photoURL: URL? {
-        guard let photo = observation.photos.first else {
+        guard let photo =
+            observation.photos.first else {
             return nil
         }
 
@@ -97,8 +165,10 @@ struct ObservationGridItemView: View {
         ]
 
         for candidate in candidates {
-            if let candidate = candidate,
-               let url = URL(string: candidate) {
+            if let candidate,
+               let url = URL(
+                    string: candidate
+               ) {
                 return url
             }
         }
@@ -107,45 +177,27 @@ struct ObservationGridItemView: View {
     }
 
     private var commonName: String? {
-        nonEmpty(observation.taxon?.preferredCommonName)
+        ObservationPresentation.nonEmpty(
+            observation.taxon?
+                .preferredCommonName
+        )
     }
 
     private var scientificName: String? {
-        nonEmpty(observation.taxon?.name)
+        ObservationPresentation.nonEmpty(
+            observation.taxon?.name
+        )
     }
 
     private var observedOn: String? {
-        nonEmpty(observation.observedOn)
+        ObservationPresentation.observedDate(
+            observation.observedOn
+        )
     }
 
-    // Приводим API-значения качества к читаемому виду.
     private var qualityTitle: String {
-        switch observation.qualityGrade {
-        case "research":
-            return "Research"
-
-        case "needs_id":
-            return "Needs ID"
-
-        case "casual":
-            return "Casual"
-
-        default:
-            return observation.qualityGrade
-                .replacingOccurrences(of: "_", with: " ")
-                .capitalized
-        }
-    }
-
-    // Пустые строки считаем отсутствующими данными,
-    // чтобы UI не создавал лишние пустые элементы.
-    private func nonEmpty(_ value: String?) -> String? {
-        guard let value = value?
-            .trimmingCharacters(in: .whitespacesAndNewlines),
-              !value.isEmpty else {
-            return nil
-        }
-
-        return value
+        ObservationPresentation.qualityTitle(
+            observation.qualityGrade
+        )
     }
 }

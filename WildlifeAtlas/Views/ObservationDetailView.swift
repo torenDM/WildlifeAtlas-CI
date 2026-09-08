@@ -176,30 +176,36 @@ struct ObservationDetailView: View {
         _ observation: Observation
     ) -> some View {
         let commonName = nonEmpty(
-            observation.taxon?.preferredCommonName
+            observation.taxon?
+                .preferredCommonName
         )
 
         let scientificName = nonEmpty(
             observation.taxon?.name
         )
 
-        if commonName != nil
-            || scientificName != nil {
-            VStack(
-                alignment: .leading,
-                spacing: 6
-            ) {
-                if let commonName {
-                    Text(commonName)
-                        .font(.title2.weight(.bold))
-                }
+        return VStack(
+            alignment: .leading,
+            spacing: 6
+        ) {
+            if let commonName {
+                Text(commonName)
+                    .font(.title2.weight(.bold))
+            }
 
-                if let scientificName {
-                    Text(scientificName)
-                        .font(.headline)
-                        .italic()
-                        .foregroundStyle(.secondary)
-                }
+            if let scientificName {
+                Text(scientificName)
+                    .font(.headline)
+                    .italic()
+                    .foregroundStyle(.secondary)
+            }
+
+            if commonName == nil
+                && scientificName == nil {
+                Text(
+                    "Observation #\(observation.id)"
+                )
+                .font(.title2.weight(.bold))
             }
         }
     }
@@ -214,9 +220,10 @@ struct ObservationDetailView: View {
             Text("Observation")
                 .font(.headline)
 
-            if let observedOn = nonEmpty(
-                observation.observedOn
-            ) {
+            if let observedOn =
+                ObservationPresentation.observedDate(
+                    observation.observedOn
+                ) {
                 Label(
                     observedOn,
                     systemImage: "calendar"
@@ -418,22 +425,32 @@ struct ObservationDetailView: View {
             ForEach(
                 Array(urls.enumerated()),
                 id: \.offset
-            ) { _, url in
-                detailImage(url: url)
+            ) { index, url in
+                detailImage(
+                    url: url,
+                    index: index,
+                    total: urls.count
+                )
             }
         }
         .frame(height: 320)
         .tabViewStyle(
-            .page(indexDisplayMode: .automatic)
+            .page(
+                indexDisplayMode: .automatic
+            )
         )
         .clipShape(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(
+                cornerRadius: 16
+            )
         )
     }
 
     @ViewBuilder
     private func detailImage(
-        url: URL
+        url: URL,
+        index: Int,
+        total: Int
     ) -> some View {
         CachedAsyncImage(url: url) { phase in
             switch phase {
@@ -465,7 +482,9 @@ struct ObservationDetailView: View {
         .frame(maxWidth: .infinity)
         .frame(height: 320)
         .clipped()
-        .accessibilityLabel("Observation photo")
+        .accessibilityLabel(
+            "Observation photo \(index + 1) of \(total)"
+        )
     }
 
     private var unavailableContent: some View {
@@ -573,24 +592,9 @@ struct ObservationDetailView: View {
     private func qualityTitle(
         _ value: String
     ) -> String {
-        switch value {
-        case "research":
-            return "Research"
-
-        case "needs_id":
-            return "Needs ID"
-
-        case "casual":
-            return "Casual"
-
-        default:
-            return value
-                .replacingOccurrences(
-                    of: "_",
-                    with: " "
-                )
-                .capitalized
-        }
+        ObservationPresentation.qualityTitle(
+            value
+        )
     }
 
     private func rankTitle(

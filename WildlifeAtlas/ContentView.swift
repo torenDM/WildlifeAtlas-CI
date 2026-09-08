@@ -200,9 +200,15 @@ struct ContentView: View {
             )
         }
         .accessibilityLabel("Favorites")
+        .accessibilityValue(
+            favoritesStore.favorites.isEmpty
+                ? "No saved observations"
+                : "\(favoritesStore.favorites.count) saved observations"
+        )
     }
 
-    // Меню содержит два независимых фильтра.
+    // Меню содержит три независимых фильтра:
+    // quality, taxon и порядок наблюдений.
     // Выбор значения передается ViewModel,
     // которая перезагружает список с первой страницы.
     private var filterMenu: some View {

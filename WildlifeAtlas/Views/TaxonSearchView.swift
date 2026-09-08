@@ -164,9 +164,18 @@ struct TaxonSearchView: View {
             if isSelected {
                 Image(systemName: "checkmark")
                     .foregroundStyle(.tint)
+                    .accessibilityHidden(true)
             }
         }
         .contentShape(Rectangle())
+        .accessibilityElement(
+            children: .combine
+        )
+        .accessibilityValue(
+            isSelected
+                ? "Selected"
+                : "Not selected"
+        )
     }
 
     private func select(

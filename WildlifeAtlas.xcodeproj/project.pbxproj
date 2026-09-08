@@ -27,6 +27,7 @@
 		A10000000000000000000018 /* FavoriteObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* FavoriteObservation.swift */; };
 		A10000000000000000000019 /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* FavoritesStore.swift */; };
 		A10000000000000000000020 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* FavoritesView.swift */; };
+		A10000000000000000000021 /* ObservationPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* ObservationPresentation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		A20000000000000000000019 /* FavoriteObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteObservation.swift; sourceTree = "<group>"; };
 		A20000000000000000000020 /* FavoritesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesStore.swift; sourceTree = "<group>"; };
 		A20000000000000000000021 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* ObservationPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationPresentation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 					A20000000000000000000016 /* ObservationDetailView.swift */,
 					A20000000000000000000018 /* CachedAsyncImage.swift */,
 					A20000000000000000000021 /* FavoritesView.swift */,
+					A20000000000000000000022 /* ObservationPresentation.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -233,6 +236,7 @@
 				A10000000000000000000018 /* FavoriteObservation.swift in Sources */,
 				A10000000000000000000019 /* FavoritesStore.swift in Sources */,
 				A10000000000000000000020 /* FavoritesView.swift in Sources */,
+				A10000000000000000000021 /* ObservationPresentation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
