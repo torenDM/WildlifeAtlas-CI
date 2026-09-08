@@ -1,9 +1,15 @@
 import Foundation
 import Combine
 
+// ViewModel основного экрана.
+// Управляет загрузкой наблюдений, состояниями экрана,
+// фильтрами и пагинацией, но не содержит SwiftUI-разметки.
 @MainActor
 final class ExploreViewModel: ObservableObject {
 
+    // Основные mutually exclusive состояния экрана.
+    // Загрузка следующей страницы хранится отдельно,
+    // чтобы уже загруженный контент не исчезал.
     enum State {
         case loading
         case content
@@ -15,6 +21,7 @@ final class ExploreViewModel: ObservableObject {
     @Published private(set) var observations: [Observation] = []
     @Published private(set) var filters = ObservationFilters()
 
+    // Состояние пагинации отделено от основного State.
     @Published private(set) var isLoadingNextPage = false
     @Published private(set) var paginationErrorMessage: String?
 
@@ -23,14 +30,22 @@ final class ExploreViewModel: ObservableObject {
 
     private var currentPage = 0
     private var hasMorePages = true
+
+    // Не позволяет повторно загружать первую страницу
+    // при повторном появлении SwiftUI View.
     private var didLoadInitialPage = false
 
+    // Версия текущего набора фильтров.
+    // Используется для игнорирования ответов от устаревших
+    // async-запросов после изменения фильтра.
     private var queryGeneration = 0
 
     init(service: INaturalistService = INaturalistService()) {
         self.service = service
     }
 
+    // Загружает первую страницу только один раз
+    // для текущего жизненного цикла ViewModel.
     func loadInitialPageIfNeeded() async {
         guard !didLoadInitialPage else {
             return
@@ -43,10 +58,13 @@ final class ExploreViewModel: ObservableObject {
         )
     }
 
+    // Повторная загрузка после ошибки первой страницы.
     func retry() async {
         await loadInitialPage()
     }
 
+    // Изменение фильтра всегда приводит к полной
+    // перезагрузке списка с первой страницы.
     func setQuality(_ quality: QualityFilter) async {
         guard filters.quality.rawValue != quality.rawValue else {
             return
@@ -65,6 +83,9 @@ final class ExploreViewModel: ObservableObject {
         await reloadForFilterChange()
     }
 
+    // Проверка вызывается при появлении элементов списка.
+    // Следующая страница загружается только при появлении
+    // последнего текущего observation.
     func loadNextPageIfNeeded(
         currentItem: Observation
     ) async {
@@ -78,6 +99,8 @@ final class ExploreViewModel: ObservableObject {
         await loadNextPage()
     }
 
+    // Повторяет только запрос следующей страницы,
+    // не перезагружая уже полученный список.
     func retryNextPage() async {
         guard hasMorePages,
               !isLoadingNextPage else {
@@ -87,6 +110,7 @@ final class ExploreViewModel: ObservableObject {
         await loadNextPage()
     }
 
+    // Сбрасывает состояние пагинации после изменения фильтра.
     private func reloadForFilterChange() async {
         queryGeneration += 1
 
@@ -100,6 +124,7 @@ final class ExploreViewModel: ObservableObject {
         await loadInitialPage()
     }
 
+    // Загружает первую страницу с актуальным набором фильтров.
     private func loadInitialPage(
         resetInitialLoadOnCancellation: Bool = false
     ) async {
@@ -115,6 +140,8 @@ final class ExploreViewModel: ObservableObject {
                 filters: filters
             )
 
+            // Если пользователь успел изменить фильтры,
+            // результат старого запроса больше не применяем.
             guard generation == queryGeneration else {
                 return
             }
@@ -122,6 +149,8 @@ final class ExploreViewModel: ObservableObject {
             observations = response.results
             currentPage = response.page
 
+            // API сообщает общее число результатов,
+            // поэтому наличие следующей страницы можно определить точно.
             hasMorePages =
                 response.page * response.perPage
                 < response.totalResults
@@ -149,6 +178,8 @@ final class ExploreViewModel: ObservableObject {
         }
     }
 
+    // Загружает следующую страницу, сохраняя на экране
+    // уже полученные observations.
     private func loadNextPage() async {
         let generation = queryGeneration
 
@@ -156,6 +187,8 @@ final class ExploreViewModel: ObservableObject {
         paginationErrorMessage = nil
 
         defer {
+            // Старый запрос не должен менять состояние
+            // после переключения фильтров.
             if generation == queryGeneration {
                 isLoadingNextPage = false
             }
@@ -195,6 +228,9 @@ final class ExploreViewModel: ObservableObject {
         }
     }
 
+    // iNaturalist является изменяемым внешним источником:
+    // между запросами границы страниц могут немного сместиться.
+    // Поэтому перед добавлением исключаем повторяющиеся ID.
     private func appendUnique(
         _ newObservations: [Observation]
     ) {

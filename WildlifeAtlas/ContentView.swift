@@ -1,7 +1,12 @@
 import SwiftUI
 
+// Корневое представление основного экрана Explore.
+// Отвечает за композицию интерфейса, тогда как загрузка данных,
+// фильтры и пагинация находятся в ExploreViewModel.
 struct ContentView: View {
 
+    // Режим отображения является presentation state,
+    // поэтому хранится непосредственно во View.
     private enum ExploreLayout {
         case list
         case grid
@@ -15,17 +20,23 @@ struct ContentView: View {
             content
                 .navigationTitle("Wildlife Atlas")
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItemGroup(
+                        placement: .topBarTrailing
+                    ) {
                         filterMenu
                         layoutPicker
                     }
                 }
         }
+        // ViewModel самостоятельно защищается
+        // от повторной загрузки первой страницы.
         .task {
             await viewModel.loadInitialPageIfNeeded()
         }
     }
 
+    // Основные состояния экрана отображаются независимо:
+    // loading, content, empty и error.
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
@@ -40,7 +51,9 @@ struct ContentView: View {
             ContentUnavailableView(
                 "No observations",
                 systemImage: "binoculars",
-                description: Text("No observations were found.")
+                description: Text(
+                    "No observations were found."
+                )
             )
 
         case .error(let message):
@@ -61,6 +74,8 @@ struct ContentView: View {
         }
     }
 
+    // List и Grid используют один и тот же массив observations
+    // и не инициируют отдельную загрузку данных при переключении.
     @ViewBuilder
     private var observationsContent: some View {
         switch layout {
@@ -75,14 +90,18 @@ struct ContentView: View {
     private var listContent: some View {
         List {
             ForEach(viewModel.observations) { observation in
-                ObservationRowView(observation: observation)
-                    .onAppear {
-                        requestNextPageIfNeeded(
-                            for: observation
-                        )
-                    }
+                ObservationRowView(
+                    observation: observation
+                )
+                .onAppear {
+                    requestNextPageIfNeeded(
+                        for: observation
+                    )
+                }
             }
 
+            // Пагинация не заменяет уже загруженный список
+            // общим loading-state.
             if viewModel.isLoadingNextPage {
                 HStack {
                     Spacer()
@@ -137,6 +156,9 @@ struct ContentView: View {
         }
     }
 
+    // Меню содержит два независимых фильтра.
+    // Выбор значения передается ViewModel,
+    // которая перезагружает список с первой страницы.
     private var filterMenu: some View {
         Menu {
             Section("Quality") {
@@ -207,6 +229,8 @@ struct ContentView: View {
                 }
             }
         } label: {
+            // Заполненная иконка показывает,
+            // что используются нестандартные фильтры.
             Image(
                 systemName: hasNonDefaultFilters
                     ? "line.3.horizontal.decrease.circle.fill"
@@ -224,8 +248,13 @@ struct ContentView: View {
             != ObservationOrder.newest.rawValue
     }
 
+    // Переключение List/Grid меняет только представление,
+    // не затрагивая загруженные observations.
     private var layoutPicker: some View {
-        Picker("Display mode", selection: $layout) {
+        Picker(
+            "Display mode",
+            selection: $layout
+        ) {
             Image(systemName: "list.bullet")
                 .tag(ExploreLayout.list)
 
@@ -237,6 +266,8 @@ struct ContentView: View {
         .accessibilityLabel("Display mode")
     }
 
+    // Ошибка следующей страницы отображается отдельно,
+    // чтобы пользователь не терял уже загруженный контент.
     private var paginationError: some View {
         VStack(spacing: 8) {
             Text("Unable to load more observations")
@@ -253,6 +284,9 @@ struct ContentView: View {
         .frame(maxWidth: .infinity)
     }
 
+    // View сообщает только о появлении элемента.
+    // Решение о необходимости запроса следующей страницы
+    // принимает ExploreViewModel.
     private func requestNextPageIfNeeded(
         for observation: Observation
     ) {

@@ -1,5 +1,8 @@
 import SwiftUI
 
+// Представление одного observation в режиме списка.
+// Компонент получает готовую модель и отвечает только
+// за отображение доступной информации.
 struct ObservationRowView: View {
     let observation: Observation
 
@@ -10,6 +13,8 @@ struct ObservationRowView: View {
             }
 
             VStack(alignment: .leading, spacing: 6) {
+                // Отсутствующие поля не заменяются фиктивным текстом:
+                // если API не вернул значение, элемент просто скрывается.
                 if let commonName = commonName {
                     Text(commonName)
                         .font(.headline)
@@ -43,6 +48,8 @@ struct ObservationRowView: View {
         .padding(.vertical, 4)
     }
 
+    // AsyncImage пока отвечает за базовую загрузку фотографии.
+    // Позже этот блок можно заменить реализацией с memory cache.
     @ViewBuilder
     private func thumbnail(url: URL) -> some View {
         AsyncImage(url: url) { phase in
@@ -78,6 +85,8 @@ struct ObservationRowView: View {
         .accessibilityLabel("Observation photo")
     }
 
+    // Выбираем первый доступный URL фотографии,
+    // отдавая предпочтение более подходящему для списка размеру.
     private var photoURL: URL? {
         guard let photo = observation.photos.first else {
             return nil
@@ -111,14 +120,18 @@ struct ObservationRowView: View {
         nonEmpty(observation.observedOn)
     }
 
+    // Приводим API-значения качества к читаемому виду.
     private var qualityTitle: String {
         switch observation.qualityGrade {
         case "research":
             return "Research"
+
         case "needs_id":
             return "Needs ID"
+
         case "casual":
             return "Casual"
+
         default:
             return observation.qualityGrade
                 .replacingOccurrences(of: "_", with: " ")
@@ -126,6 +139,8 @@ struct ObservationRowView: View {
         }
     }
 
+    // Пустые строки считаем отсутствующими данными,
+    // чтобы UI не создавал лишние пустые элементы.
     private func nonEmpty(_ value: String?) -> String? {
         guard let value = value?
             .trimmingCharacters(in: .whitespacesAndNewlines),

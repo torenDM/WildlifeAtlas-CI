@@ -1,83 +1,92 @@
 import SwiftUI
 
+// Представление одного observation в режиме списка.
+// Компонент получает готовую модель и отвечает только
+// за отображение доступной информации.
 struct ObservationGridItemView: View {
     let observation: Observation
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            if let photoURL {
-                AsyncImage(url: photoURL) { phase in
-                    switch phase {
-                    case .empty:
-                        ZStack {
-                            Rectangle()
-                                .fill(.quaternary)
+        HStack(alignment: .top, spacing: 12) {
+            if let photoURL = photoURL {
+                thumbnail(url: photoURL)
+            }
 
-                            ProgressView()
-                        }
-
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-
-                    case .failure:
-                        ZStack {
-                            Rectangle()
-                                .fill(.quaternary)
-
-                            Image(systemName: "photo")
-                                .foregroundStyle(.secondary)
-                        }
-
-                    @unknown default:
-                        EmptyView()
-                    }
+            VStack(alignment: .leading, spacing: 6) {
+                // Отсутствующие поля не заменяются фиктивным текстом:
+                // если API не вернул значение, элемент просто скрывается.
+                if let commonName = commonName {
+                    Text(commonName)
+                        .font(.headline)
+                        .lineLimit(2)
                 }
-                .frame(maxWidth: .infinity)
-                .aspectRatio(1, contentMode: .fit)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 10)
-                )
-                .accessibilityLabel("Observation photo")
+
+                if let scientificName = scientificName {
+                    Text(scientificName)
+                        .font(.subheadline)
+                        .italic()
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+
+                if let observedOn = observedOn {
+                    Label(observedOn, systemImage: "calendar")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text(qualityTitle)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.quaternary)
+                    .clipShape(Capsule())
             }
 
-            if let commonName {
-                Text(commonName)
-                    .font(.headline)
-                    .lineLimit(2)
-            }
-
-            if let scientificName {
-                Text(scientificName)
-                    .font(.subheadline)
-                    .italic()
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
-
-            if let observedOn {
-                Label(observedOn, systemImage: "calendar")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            }
-
-            Text(qualityTitle)
-                .font(.caption.weight(.semibold))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.quaternary)
-                .clipShape(Capsule())
+            Spacer(minLength: 0)
         }
-        .padding(10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            .thinMaterial,
-            in: RoundedRectangle(cornerRadius: 14)
-        )
+        .padding(.vertical, 4)
     }
 
+    // AsyncImage пока отвечает за базовую загрузку фотографии.
+    // Позже этот блок можно заменить реализацией с memory cache.
+    @ViewBuilder
+    private func thumbnail(url: URL) -> some View {
+        AsyncImage(url: url) { phase in
+            switch phase {
+            case .empty:
+                ZStack {
+                    Rectangle()
+                        .fill(.quaternary)
+
+                    ProgressView()
+                }
+
+            case .success(let image):
+                image
+                    .resizable()
+                    .scaledToFill()
+
+            case .failure:
+                ZStack {
+                    Rectangle()
+                        .fill(.quaternary)
+
+                    Image(systemName: "photo")
+                        .foregroundStyle(.secondary)
+                }
+
+            @unknown default:
+                EmptyView()
+            }
+        }
+        .frame(width: 88, height: 88)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .accessibilityLabel("Observation photo")
+    }
+
+    // Выбираем первый доступный URL фотографии,
+    // отдавая предпочтение более подходящему для списка размеру.
     private var photoURL: URL? {
         guard let photo = observation.photos.first else {
             return nil
@@ -90,7 +99,7 @@ struct ObservationGridItemView: View {
         ]
 
         for candidate in candidates {
-            if let candidate,
+            if let candidate = candidate,
                let url = URL(string: candidate) {
                 return url
             }
@@ -111,6 +120,7 @@ struct ObservationGridItemView: View {
         nonEmpty(observation.observedOn)
     }
 
+    // Приводим API-значения качества к читаемому виду.
     private var qualityTitle: String {
         switch observation.qualityGrade {
         case "research":
@@ -129,6 +139,8 @@ struct ObservationGridItemView: View {
         }
     }
 
+    // Пустые строки считаем отсутствующими данными,
+    // чтобы UI не создавал лишние пустые элементы.
     private func nonEmpty(_ value: String?) -> String? {
         guard let value = value?
             .trimmingCharacters(in: .whitespacesAndNewlines),

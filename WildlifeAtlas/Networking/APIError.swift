@@ -1,5 +1,8 @@
 import Foundation
 
+// Единый тип ошибок networking-слоя.
+// APIClient преобразует низкоуровневые ошибки URLSession,
+// HTTP и JSON-декодирования в понятные приложению категории.
 enum APIError: Error, LocalizedError {
     case invalidURL
     case invalidResponse
@@ -7,6 +10,9 @@ enum APIError: Error, LocalizedError {
     case decodingFailed(Error)
     case networkFailed(Error)
 
+    // Пользовательское описание ошибки.
+    // Благодаря LocalizedError ViewModel может получить готовый текст
+    // через error.localizedDescription и показать его в error-state.
     var errorDescription: String? {
         switch self {
         case .invalidURL:

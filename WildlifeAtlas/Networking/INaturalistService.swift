@@ -1,13 +1,23 @@
 import Foundation
 
+// Сервис для работы с конкретными endpoint'ами iNaturalist.
+// В отличие от APIClient, этот слой знает структуру API:
+// пути, query-параметры и типы ожидаемых ответов.
 final class INaturalistService {
     private let apiClient: APIClient
-    private let baseURL = URL(string: "https://api.inaturalist.org/v1")!
+
+    // Базовый адрес API, от которого строятся все endpoint'ы.
+    private let baseURL = URL(
+        string: "https://api.inaturalist.org/v1"
+    )!
 
     init(apiClient: APIClient = APIClient()) {
         self.apiClient = apiClient
     }
 
+    // Загружает страницу наблюдений с учетом выбранных фильтров.
+    // Пагинация управляется через page/perPage,
+    // а сортировка и качество берутся из ObservationFilters.
     func observations(
         page: Int,
         perPage: Int = 20,
@@ -18,14 +28,34 @@ final class INaturalistService {
             resolvingAgainstBaseURL: false
         )
 
+        // Базовые параметры применяются к каждому запросу наблюдений.
+        // captive=false — обязательное ограничение задания,
+        // поэтому оно не вынесено в пользовательские фильтры.
         var queryItems = [
-            URLQueryItem(name: "captive", value: "false"),
-            URLQueryItem(name: "order_by", value: "observed_on"),
-            URLQueryItem(name: "order", value: filters.order.apiValue),
-            URLQueryItem(name: "page", value: String(page)),
-            URLQueryItem(name: "per_page", value: String(perPage))
+            URLQueryItem(
+                name: "captive",
+                value: "false"
+            ),
+            URLQueryItem(
+                name: "order_by",
+                value: "observed_on"
+            ),
+            URLQueryItem(
+                name: "order",
+                value: filters.order.apiValue
+            ),
+            URLQueryItem(
+                name: "page",
+                value: String(page)
+            ),
+            URLQueryItem(
+                name: "per_page",
+                value: String(perPage)
+            )
         ]
 
+        // Фильтр по таксону добавляется только тогда,
+        // когда пользователь действительно выбрал таксон.
         if let taxonID = filters.taxonID {
             queryItems.append(
                 URLQueryItem(
@@ -35,6 +65,8 @@ final class INaturalistService {
             )
         }
 
+        // Для режима Any параметр quality_grade не отправляется.
+        // В запрос он попадает только при выборе конкретного качества.
         if let quality = filters.quality.apiValue {
             queryItems.append(
                 URLQueryItem(
@@ -56,6 +88,9 @@ final class INaturalistService {
         )
     }
 
+    // Выполняет autocomplete-поиск таксонов.
+    // Результаты этого endpoint'а используются
+    // при выборе taxon-фильтра на основном экране.
     func searchTaxa(
         query: String,
         perPage: Int = 10
@@ -68,8 +103,14 @@ final class INaturalistService {
         )
 
         components?.queryItems = [
-            URLQueryItem(name: "q", value: query),
-            URLQueryItem(name: "per_page", value: String(perPage))
+            URLQueryItem(
+                name: "q",
+                value: query
+            ),
+            URLQueryItem(
+                name: "per_page",
+                value: String(perPage)
+            )
         ]
 
         guard let url = components?.url else {
@@ -82,6 +123,9 @@ final class INaturalistService {
         )
     }
 
+    // Загружает подробную информацию об одном наблюдении по ID.
+    // API возвращает стандартную обертку с results,
+    // поэтому извлекаем первый элемент вручную.
     func observation(
         id: Int
     ) async throws -> Observation {
