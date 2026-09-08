@@ -1,0 +1,38 @@
+name: iOS Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Wildlife Atlas
+    runs-on: macos-26
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26.6
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Check project
+        run: xcodebuild -list -project WildlifeAtlas.xcodeproj
+
+      - name: Build application
+        run: |
+          xcodebuild \
+            -project WildlifeAtlas.xcodeproj \
+            -target WildlifeAtlas \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
