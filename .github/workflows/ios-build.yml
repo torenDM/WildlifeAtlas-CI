@@ -36,3 +36,34 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             build
+
+      # Находим собранный Simulator .app и упаковываем его
+      # в ZIP, который можно загрузить в Appetize.
+      - name: Prepare simulator build
+        run: |
+          APP_PATH=$(find build -type d -name "WildlifeAtlas.app" | head -n 1)
+
+          if [ -z "$APP_PATH" ]; then
+            echo "WildlifeAtlas.app was not found"
+            exit 1
+          fi
+
+          echo "Found app at: $APP_PATH"
+
+          ditto \
+            -c \
+            -k \
+            --sequesterRsrc \
+            --keepParent \
+            "$APP_PATH" \
+            WildlifeAtlas-Simulator.zip
+
+          ls -lh WildlifeAtlas-Simulator.zip
+
+      - name: Upload simulator build
+        uses: actions/upload-artifact@v4
+        with:
+          name: WildlifeAtlas-Simulator
+          path: WildlifeAtlas-Simulator.zip
+          if-no-files-found: error
+          retention-days: 7
