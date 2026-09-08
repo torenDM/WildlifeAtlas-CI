@@ -216,6 +216,14 @@ struct ContentView: View {
         .accessibilityLabel("Filters")
     }
 
+    private var hasNonDefaultFilters: Bool {
+        viewModel.filters.quality.rawValue
+            != QualityFilter.any.rawValue
+            ||
+        viewModel.filters.order.rawValue
+            != ObservationOrder.newest.rawValue
+    }
+
     private var layoutPicker: some View {
         Picker("Display mode", selection: $layout) {
             Image(systemName: "list.bullet")
