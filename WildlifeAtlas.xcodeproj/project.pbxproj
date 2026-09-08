@@ -15,6 +15,7 @@
 		A10000000000000000000006 /* ObservationFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* ObservationFilters.swift */; };
 		A10000000000000000000007 /* INaturalistService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* INaturalistService.swift */; };
 		A10000000000000000000008 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* ExploreViewModel.swift */; };
+		A10000000000000000000009 /* ObservationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* ObservationRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		A20000000000000000000007 /* ObservationFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationFilters.swift; sourceTree = "<group>"; };
 		A20000000000000000000008 /* INaturalistService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INaturalistService.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* ObservationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 				A40000000000000000000004 /* Models */,
 				A40000000000000000000005 /* Networking */,
 				A40000000000000000000006 /* ViewModels */,
+				A40000000000000000000007 /* Views */,
 			);
 			path = WildlifeAtlas;
 			sourceTree = "<group>";
@@ -101,6 +104,14 @@
 			sourceTree = "<group>";
 		};
 
+		A40000000000000000000007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000010 /* ObservationRowView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -177,6 +188,7 @@
 				A10000000000000000000006 /* ObservationFilters.swift in Sources */,
 				A10000000000000000000007 /* INaturalistService.swift in Sources */,
 				A10000000000000000000008 /* ExploreViewModel.swift in Sources */,
+				A10000000000000000000009 /* ObservationRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,9 +22,10 @@ struct ContentView: View {
             ProgressView("Loading observations...")
 
         case .content:
-            List(viewModel.observations, id: \.id) { observation in
-                Text("Observation #\(observation.id)")
+            List(viewModel.observations) { observation in
+                ObservationRowView(observation: observation)
             }
+            .listStyle(.plain)
 
         case .empty:
             ContentUnavailableView(
